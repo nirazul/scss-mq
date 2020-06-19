@@ -1,0 +1,34 @@
+@use 'sass:list';
+@use 'sass:map';
+@use 'sass:meta';
+@use '../vendor/@nirazul/scss-utils/lib/function/map/assign' as *;
+@use 'config';
+@use 'parser/expression';
+
+@mixin configure($widths, $name) {
+  @if (list.length($widths)) {
+    $w: (map.merge(config.$widths, ($name:$widths)));
+    config.$widths: $w;
+  }
+
+  @debug config.get-config();
+}
+
+/// Check a list of conditions for it's validity based on the used operator as only `<=` and `>` make sense
+/// @param {List} $conditions - List of conditions, possibly nested
+///
+@mixin check-condition-validity($conditions) {
+  $media-expressions: map.get(config.get-config('default'), 'media-expressions');
+
+  @each $condition in $conditions {
+    @if (meta.type-of($condition) == 'list') {
+      @include check-condition-validity($condition);
+    } @else if not map.has-key($media-expressions, $condition) {
+      $operator: expression.get-operator($condition);
+
+      @if not list.index(('<=', '≤', '>'), $operator) {
+        @error 'Operator "#{$operator}" is not allowed in condition "#{$condition}"';
+      }
+    }
+  }
+}

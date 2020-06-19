@@ -1,0 +1,93 @@
+@use 'sass:list';
+@use 'sass:meta';
+@use 'sass:string';
+@use 'expression' as expression;
+
+/// Get a shallow list of resolved feature queries
+/// @param {string} $queries - A nested list structure
+/// @param {boolean} $do-parse - Try to parse expressions
+/// @return {List} - A one item deep nested list like `(a b, c d e)`
+///
+@function resolve-feature-queries($queries, $do-parse: true) {
+  $separator: list.separator($queries);
+  $result: if($separator == 'space', ((),), ());
+
+  @each $query in $queries {
+    $chainable-queries: ();
+
+    @if (meta.type-of($query) == 'list') {
+      // List item is a list itself
+      $chainable-queries: resolve-feature-queries($query);
+    } @else {
+      // List item is a string
+      $parsed-query: if($do-parse, expression.parse($query), $query);
+
+      @if (meta.type-of($parsed-query) == 'list') {
+        // Parsed expression is a list
+        $chainable-queries: resolve-feature-queries($parsed-query, false);
+      } @else {
+        // Parsed expression is a string
+        $chainable-queries: ($parsed-query);
+      }
+    }
+
+    $result: append-feature-query($result, $chainable-queries, $separator);
+  }
+
+  @return $result;
+}
+
+/// Combine two query lists as a logical AND / OR operation
+/// @param {List} $base-queries - The host list
+/// @param {List} $append-queries - The list that is being appended
+/// @param {string} $separator - Either `space` or `comma`
+/// @return {List} - A one item deep nested list like `(a b, c d e)`
+///
+@function append-feature-query($base-queries, $append-queries, $separator) {
+  $result: if($separator == 'space', (), $base-queries);
+
+  @each $append-query in $append-queries {
+    @if ($separator == 'space') {
+      // Logical AND
+      @each $base-query in $base-queries {
+        $updated-query: list.join($base-query, $append-query, $separator);
+        $result: list.append($result, $updated-query, 'comma');
+      }
+    } @else {
+      // Logical OR
+      $result: list.append($result, $append-query, 'comma');
+    }
+  }
+
+  @return $result;
+}
+
+/// Parse a list of resolved expressions to return a valid media-query
+/// @param {List} $queries - A one item deep nested list like `(a b, c d e)`
+/// @return {string} - A valid media-query string
+///
+@function parse-media-query($queries) {
+  $result: null;
+  $flat-queries: ();
+  $separator: list.separator($queries);
+  $conjunction: if($separator == 'space', ' and ', ', ');
+
+  @if (meta.type-of($queries) == 'string') {
+    @return $queries;
+  }
+
+  @each $query in $queries {
+    @if (meta.type-of($query) == 'list') {
+      $flat-queries: list.append($flat-queries, parse-media-query($query));
+    } @else {
+      $flat-queries: list.append($flat-queries, $query);
+    }
+  }
+
+  @for $i from 1 through (list.length($flat-queries)) {
+    $e: list.nth($flat-queries, $i);
+    $result: string.unquote('#{$result}#{$e}#{if($i != list.length($flat-queries), $conjunction, '')}');
+  }
+
+  @return $result;
+}

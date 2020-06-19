@@ -1,0 +1,101 @@
+////
+/// Expression parsing engine
+////
+@use 'sass:list';
+@use 'sass:map';
+@use 'sass:string';
+@use '../../vendor/@nirazul/scss-utils/lib/function/meta/to-number' as *;
+@use '../config';
+
+/// Get operator of an expression
+/// @param {string} $expression - Expression to extract operator from
+/// @return {string} - Any of `>=`, `>`, `<=`, `<`, `≥`, `≤`
+///
+@function get-operator($expression) {
+  @each $operator in ('>=', '>', '<=', '<', '≥', '≤') {
+    @if (string.index($expression, $operator)) {
+      @return $operator;
+    }
+  }
+
+  @error 'No operator found in "#{$expression}".';
+}
+
+/// Get dimension of an expression, based on a found operator
+/// @param {string} $expression - Expression to extract dimension from
+/// @param {string} $operator - Operator from `$expression`
+/// @return {string} - `width` or `height` (or potentially anything else)
+///
+@function get-dimension($expression, $operator) {
+  $operator-index: string.index($expression, $operator);
+  $parsed-dimension: string.slice($expression, 0, $operator-index - 1);
+  $dimension: 'width';
+
+  @if string.length($parsed-dimension) > 0 {
+    $dimension: $parsed-dimension;
+  }
+
+  @return $dimension;
+}
+
+/// Get dimension prefix based on an operator
+/// @param {string} $operator - Operator
+/// @return {string} - `min` or `max`
+///
+@function get-prefix($operator) {
+  @return if(list.index(('<', '<=', '≤'), $operator), 'max', 'min');
+}
+
+///
+/// Get value of an expression, based on a found operator
+///
+/// @param {string} $expression - Expression to extract value from
+/// @param {string} $operator - Operator from `$expression`
+///
+/// @return {Number} - A numeric value
+///
+@function get-value($expression, $operator) {
+  $operator-index: string.index($expression, $operator);
+  $value: string.slice($expression, $operator-index + string.length($operator));
+
+  @if (map.has-key($breakpoints, $value)) {
+    $value: map.get($breakpoints, $value);
+  } @else {
+    $value: to-number($value);
+  }
+
+  $interval: map.get(config.$unit-intervals, unit($value));
+
+  @if not $interval {
+    @error 'Unknown unit "#{unit($value)}".'
+  }
+
+  @if $operator == '>' {
+    $value: $value + $interval;
+  } @else if $operator == '<' {
+    $value: $value - $interval;
+  }
+
+  @return $value;
+}
+
+/// Parse an expression to return a valid media-query expression
+/// @param {string} $expression - Expression to parse
+/// @return {string} - Valid media query
+///
+@function parse($expression) {
+  $media-expressions: config.get-config('default');
+
+  // If it is part of $media-expressions, it has no operator
+  // then there is no need to go any further, just return the value
+  @if (map.has-key($media-expressions, $expression)) {
+    @return map.get($media-expressions, $expression);
+  }
+
+  $operator: get-operator($expression);
+  $dimension: get-dimension($expression, $operator);
+  $prefix: get-prefix($operator);
+  $value: get-value($expression, $operator);
+
+  @return '(#{$prefix}-#{$dimension}: #{$value})';
+}

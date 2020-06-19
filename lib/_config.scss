@@ -1,0 +1,94 @@
+@use 'sass:list';
+@use 'sass:map';
+@use 'sass:meta';
+@use '../vendor/@nirazul/scss-utils/lib/function/map/assign' as *;
+
+$unit-intervals: (
+  'px': 1,
+  'em': 0.01,
+  'rem': 0.1,
+  '': 0
+) !default;
+
+$widths: () !default;
+
+/// Media type expressions
+///
+$media-type-expressions: (
+  screen: 'screen',
+  print: 'print',
+);
+
+/// Media feature orientation expressions
+///
+$media-feature-orientation-expressions: (
+  portrait: '(orientation: portrait)',
+  landscape: '(orientation: landscape)',
+) !default;
+
+/// Media feature resolution expressions
+///
+$media-feature-resolution-expressions: (
+  res2x: ('(min-resolution: 2dppx)'),
+  res3x: ('(min-resolution: 3dppx)'),
+) !default;
+
+/// TODO
+///
+@function get-config($name: 'default') {
+  @return (
+    'media-expressions': assign(
+      $media-type-expressions,
+      $media-feature-orientation-expressions,
+      $media-feature-resolution-expressions,
+      create-media-feature-width-expressions(map.get($widths, $name)),
+    )
+  );
+}
+
+/// Compile a map of width expressions from a widths config list
+/// @param {List} $config - The widths config list
+///
+@function create-media-feature-width-expressions($config) {
+  $result: ();
+  $num-entries: list.length($config);
+
+  @if ($num-entries < 3) {
+    @error 'The config must have at least 3 entries (2 viewports and one breakpoint).';
+  }
+
+  @for $i from 1 through (list.length($config)) {
+    $key: list.nth($config, $i);
+    $is-first: $i == 1;
+    $is-last: $i == list.length($config);
+    $is-string: meta.type-of($key) == 'string';
+
+    @if (($is-first or $is-last) and not $is-string) {
+      @error 'First and last entry must be a string (name of a viewport).';
+    }
+
+    @if $is-string {
+      $min-width-value: '';
+      $max-width-value: '';
+      $conjunction: '';
+
+      @if not $is-first {
+        $value: list.nth($config, $i - 1);
+        $min-width-value: '(min-width: #{$value})';
+      }
+
+      @if not $is-last {
+        $value: list.nth($config, $i + 1);
+        $max-width-value: '(max-width: #{$value - 1})';
+      }
+
+      @if not $is-first and not $is-last {
+        $conjunction: ' and ';
+      }
+
+      $result: assign($result, ($key: '#{$min-width-value}#{$conjunction}#{$max-width-value}'));
+    }
+  }
+
+  @return $result;
+}

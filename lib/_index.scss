@@ -1,0 +1,46 @@
+////
+/// Helper library to make `include-media` more useful in many ways
+////
+@use 'sass:list';
+@use 'sass:map';
+@use 'sass:meta';
+@use '../vendor/@nirazul/scss-utils/lib/function/list/purge' as *;
+@use 'util';
+@use 'parser/index' as parser;
+
+/// Apply configuration to the module
+///
+@mixin configure($widths: (), $name: 'default') {
+  @include util.configure($widths, $name);
+}
+
+/// Guard mixin to enable usage of `include-media` with `null` values and protect against wrong usage.
+/// @param {...string} $conditions - Media query conditions
+/// @example scss - Above breakpoint `md`:
+///   @include media('>md') { color: red; }
+/// @example scss - Below or equal breakpoint `lg`:
+///   @include media('<=lg') { color: red; }
+///
+@mixin media($conditions...) {
+  $purged-conditions: purge($conditions);
+  $resolved-conditions: ();
+  $num-purged-conditions: list.length($purged-conditions);
+
+  @if ($num-purged-conditions == 0) {
+    @content;
+  } @else {
+    @include util.check-condition-validity($purged-conditions);
+
+    @if ($num-purged-conditions == 1 and meta.type-of(list.nth($purged-conditions, 1)) == 'list') {
+      $resolved-conditions: list.nth($purged-conditions, 1);
+    } @else if ($num-purged-conditions > 1) {
+      @each $condition in $purged-conditions {
+        $resolved-conditions: list.append($resolved-conditions, $condition, space);
+      }
+    }
+
+    @media #{unquote(parser.parse-media-query(parser.resolve-feature-queries($resolved-conditions)))} {
+      @content;
+    }
+  }
+}

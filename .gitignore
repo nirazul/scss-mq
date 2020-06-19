@@ -1,0 +1,13 @@
+# nvm config
+.nvmrc
+
+# Dependency directories
+node_modules/
+vendor/
+
+# Editor config files
+.idea/
+
+# Generated test files
+test.css
+test.css.map
