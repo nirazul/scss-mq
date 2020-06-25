@@ -33,10 +33,17 @@ $media-feature-resolution-expressions: (
   res3x: ('(min-resolution: 3dppx)'),
 ) !default;
 
-/// TODO
+/// Return a config map via name
+/// @param {string} $name - The config's name
+/// @return {Map} - The configuration
 ///
 @function get-config($name: 'default') {
+  @if not map.has-key($widths, $name) {
+    @error 'Config "#{$name}" was not found. You must register it first.';
+  }
+
   @return (
+    'breakpoints': create-breakpoints(map.get($widths, $name)),
     'media-expressions': assign(
       $media-type-expressions,
       $media-feature-orientation-expressions,
@@ -46,10 +53,47 @@ $media-feature-resolution-expressions: (
   );
 }
 
+/// Create a map of breakpoints with their max values as keys
+/// @param {Map} $config - The input config map
+/// @return {Map} - The breakpoint definitions
+///
+@function create-breakpoints($config) {
+  $result: ();
+  $boundaries: create-viewport-boundaries($config);
+
+  @each $map-key, $map-value in $boundaries {
+    $max-width-value: map.get($map-value, 'max');
+    $result: map.merge($result, ($map-key: $max-width-value));
+  }
+
+  @return $result;
+}
+
 /// Compile a map of width expressions from a widths config list
 /// @param {List} $config - The widths config list
 ///
 @function create-media-feature-width-expressions($config) {
+  $result: ();
+  $boundaries: create-viewport-boundaries($config);
+
+  @each $map-key, $map-value in $boundaries {
+    $min-width-value: map.get($map-value, 'min');
+    $max-width-value: map.get($map-value, 'max');
+    $min-width-expr: if($min-width-value, '(min-width: #{$min-width-value})', '');
+    $max-width-expr: if($max-width-value, '(max-width: #{$max-width-value})', '');
+    $conjunction-expr: if($min-width-value and $max-width-value, ' and ', '');
+
+    $result: assign($result, ($map-key: '#{$min-width-expr}#{$conjunction-expr}#{$max-width-expr}'));
+  }
+
+  @return $result;
+}
+
+/// Create a boundaries object from a config
+/// @param {Map} $config - The input config map
+/// @return {Map} - The resulting boundaries map
+///
+@function create-viewport-boundaries($config) {
   $result: ();
   $num-entries: list.length($config);
 
@@ -57,7 +101,7 @@ $media-feature-resolution-expressions: (
     @error 'The config must have at least 3 entries (2 viewports and one breakpoint).';
   }
 
-  @for $i from 1 through (list.length($config)) {
+  @for $i from 1 through $num-entries {
     $key: list.nth($config, $i);
     $is-first: $i == 1;
     $is-last: $i == list.length($config);
@@ -68,25 +112,20 @@ $media-feature-resolution-expressions: (
     }
 
     @if $is-string {
-      $min-width-value: '';
-      $max-width-value: '';
-      $conjunction: '';
+      $boundaries: ();
 
       @if not $is-first {
         $value: list.nth($config, $i - 1);
-        $min-width-value: '(min-width: #{$value})';
+        $boundaries: assign($boundaries, (min: $value));
       }
 
       @if not $is-last {
         $value: list.nth($config, $i + 1);
-        $max-width-value: '(max-width: #{$value - 1})';
+        $interval: map.get($unit-intervals, unit($value));
+        $boundaries: assign($boundaries, (max: $value - $interval));
       }
 
-      @if not $is-first and not $is-last {
-        $conjunction: ' and ';
-      }
-
-      $result: assign($result, ($key: '#{$min-width-value}#{$conjunction}#{$max-width-value}'));
+      $result: assign($result, ($key: $boundaries));
     }
   }
 

@@ -1,3 +1,9 @@
 @use 'index' as mq;
 
 @include mq.configure($widths: (xs 544px sm 768px md 992px lg 1280px xl 1600px xxl));
+
+@include mq.media(('xs'), 'default') {
+  body {
+    background-color: red;
+  }
+}

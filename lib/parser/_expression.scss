@@ -3,6 +3,7 @@
 ////
 @use 'sass:list';
 @use 'sass:map';
+@use 'sass:meta';
 @use 'sass:string';
 @use '../../vendor/@nirazul/scss-utils/lib/function/meta/to-number' as *;
 @use '../config';
@@ -51,10 +52,11 @@
 ///
 /// @param {string} $expression - Expression to extract value from
 /// @param {string} $operator - Operator from `$expression`
+/// @param {Map} $breakpoints - A map of breakpoints
 ///
 /// @return {Number} - A numeric value
 ///
-@function get-value($expression, $operator) {
+@function get-value($expression, $operator, $breakpoints) {
   $operator-index: string.index($expression, $operator);
   $value: string.slice($expression, $operator-index + string.length($operator));
 
@@ -62,6 +64,10 @@
     $value: map.get($breakpoints, $value);
   } @else {
     $value: to-number($value);
+  }
+
+  @if meta.type-of($value) != 'number' {
+    @error 'Value "#{inspect($value)}" is not a number.';
   }
 
   $interval: map.get(config.$unit-intervals, unit($value));
@@ -81,10 +87,13 @@
 
 /// Parse an expression to return a valid media-query expression
 /// @param {string} $expression - Expression to parse
+/// @param {string} $config-name - The utilized config's name
 /// @return {string} - Valid media query
 ///
-@function parse($expression) {
-  $media-expressions: config.get-config('default');
+@function parse($expression, $config-name: 'default') {
+  $config: config.get-config($config-name);
+  $media-expressions: map.get($config, 'media-expressions');
+  $breakpoints: map.get($config, 'breakpoints');
 
   // If it is part of $media-expressions, it has no operator
   // then there is no need to go any further, just return the value
@@ -95,7 +104,7 @@
   $operator: get-operator($expression);
   $dimension: get-dimension($expression, $operator);
   $prefix: get-prefix($operator);
-  $value: get-value($expression, $operator);
+  $value: get-value($expression, $operator, $breakpoints);
 
   @return '(#{$prefix}-#{$dimension}: #{$value})';
 }

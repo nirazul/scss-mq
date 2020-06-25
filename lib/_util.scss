@@ -10,19 +10,18 @@
     $w: (map.merge(config.$widths, ($name:$widths)));
     config.$widths: $w;
   }
-
-  @debug config.get-config();
 }
 
 /// Check a list of conditions for it's validity based on the used operator as only `<=` and `>` make sense
 /// @param {List} $conditions - List of conditions, possibly nested
+/// @param {string} $config-name - The utilized config's name
 ///
-@mixin check-condition-validity($conditions) {
-  $media-expressions: map.get(config.get-config('default'), 'media-expressions');
+@mixin check-condition-validity($conditions, $config-name) {
+  $media-expressions: map.get(config.get-config($config-name), 'media-expressions');
 
   @each $condition in $conditions {
     @if (meta.type-of($condition) == 'list') {
-      @include check-condition-validity($condition);
+      @include check-condition-validity($condition, $config-name);
     } @else if not map.has-key($media-expressions, $condition) {
       $operator: expression.get-operator($condition);
 
