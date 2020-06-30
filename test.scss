@@ -1,9 +1,54 @@
+@use 'sass:map';
+@use 'sass:meta';
 @use 'index' as mq;
 
-@include mq.configure($widths: (xs 544px sm 768px md 992px lg 1280px xl 1600px xxl));
+//@include mq.configure-globally(
+//  $allowed-operators: ('<=', '≤', '>'),
+//);
 
-@include mq.media(('xs'), 'default') {
-  body {
-    background-color: red;
+@include mq.configure(
+  $widths: (xs 544px sm 768px md 992px lg 1280px xl 1600px xxl),
+  $name: 'default',
+);
+@include mq.configure(
+  $widths: ('phone' 768px 'desktop'),
+  $name: 'simple',
+);
+
+$test-configs: (
+  't-config-default-1': (('xs')),
+  't-config-default-2': (('xs'), 'default'),
+  't-config-default-3': (('md'), 'default'),
+  't-config-default-4': (('<md'), 'default'),
+  't-config-default-5': (('<=md'), 'default'),
+  't-config-default-6': (('>md'), 'default'),
+  't-config-default-7': (('>=md'), 'default'),
+  't-config-simple-1': (('phone'), 'simple'),
+  't-config-simple-2': (('>phone'), 'simple'),
+  't-config-simple-3': (('>=desktop'), 'simple'),
+  't-config-simple-4': (('<desktop'), 'simple'),
+);
+
+$test-fixtures: (
+  't-config-default-1': '(max-width: 543px)',
+  't-config-default-2': '(max-width: 543px)',
+  't-config-default-3': '(min-width: 768px) and (max-width: 991px)',
+  't-config-default-4': '(max-width: 767px)',
+  't-config-default-5': '(max-width: 991px)',
+  't-config-default-6': '(min-width: 992px)',
+  't-config-default-7': '(min-width: 768px)',
+  't-config-simple-1': '(max-width: 767px)',
+  't-config-simple-2': '(min-width: 768px)',
+  't-config-simple-3': '(min-width: 768px)',
+  't-config-simple-4': '(max-width: 767px)',
+);
+
+@each $key in (map.keys($test-configs)) {
+  $config: map.get($test-configs, $key);
+  $fixture: map.get($test-fixtures, $key);
+
+  /* #{meta.inspect($config)} */
+  @include mq.media($config...) {
+    /* = #{$fixture} */
   }
 }

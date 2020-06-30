@@ -3,9 +3,11 @@
 ////
 @use 'sass:list';
 @use 'sass:map';
+@use 'sass:math';
 @use 'sass:meta';
 @use 'sass:string';
 @use '../../vendor/@nirazul/scss-utils/lib/function/meta/to-number' as *;
+@use '../../vendor/@nirazul/scss-utils/lib/function/map/deep-get' as *;
 @use '../config';
 
 /// Get operator of an expression
@@ -47,42 +49,52 @@
   @return if(list.index(('<', '<=', '≤'), $operator), 'max', 'min');
 }
 
-///
 /// Get value of an expression, based on a found operator
 ///
 /// @param {string} $expression - Expression to extract value from
 /// @param {string} $operator - Operator from `$expression`
-/// @param {Map} $breakpoints - A map of breakpoints
+/// @param {Map} $boundaries - A map of viewport boundaries
 ///
 /// @return {Number} - A numeric value
 ///
-@function get-value($expression, $operator, $breakpoints) {
+@function get-value($expression, $operator, $boundaries) {
   $operator-index: string.index($expression, $operator);
   $value: string.slice($expression, $operator-index + string.length($operator));
+  $result: null;
 
-  @if (map.has-key($breakpoints, $value)) {
-    $value: map.get($breakpoints, $value);
+  @if (map.has-key($boundaries, $value)) {
+    $boundary: if(list.index(('>=', '<', '≥'), $operator), 'min', 'max');
+    $result: deep-get($boundaries, $value, $boundary);
+
+    @debug $boundaries;
+
+    @if not $result {
+      @error 'Boundary "#{$boundary}" is not defined for viewport "#{$value}" in expression "#{$expression}".';
+    }
   } @else {
-    $value: to-number($value);
+    $result: $value;
   }
 
-  @if meta.type-of($value) != 'number' {
-    @error 'Value "#{inspect($value)}" is not a number.';
+  $result: to-number($result);
+
+  @if meta.type-of($result) != 'number' {
+    @error 'Value "#{meta.inspect($result)}" is not a number.';
   }
 
-  $interval: map.get(config.$unit-intervals, unit($value));
+  $unit: math.unit($result);
+  $interval: map.get(config.$unit-intervals, $unit);
 
   @if not $interval {
-    @error 'Unknown unit "#{unit($value)}".'
+    @error 'Unknown unit "#{$unit}".'
   }
 
   @if $operator == '>' {
-    $value: $value + $interval;
+    $result: $result + $interval;
   } @else if $operator == '<' {
-    $value: $value - $interval;
+    $result: $result - $interval;
   }
 
-  @return $value;
+  @return $result;
 }
 
 /// Parse an expression to return a valid media-query expression
@@ -93,7 +105,7 @@
 @function parse($expression, $config-name) {
   $config: config.get-config($config-name);
   $media-expressions: map.get($config, 'media-expressions');
-  $breakpoints: map.get($config, 'breakpoints');
+  $boundaries: map.get($config, 'boundaries');
 
   // If it is part of $media-expressions, it has no operator
   // then there is no need to go any further, just return the value
@@ -104,7 +116,7 @@
   $operator: get-operator($expression);
   $dimension: get-dimension($expression, $operator);
   $prefix: get-prefix($operator);
-  $value: get-value($expression, $operator, $breakpoints);
+  $value: get-value($expression, $operator, $boundaries);
 
   @return '(#{$prefix}-#{$dimension}: #{$value})';
 }

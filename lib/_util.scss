@@ -5,10 +5,27 @@
 @use 'config';
 @use 'parser/expression';
 
+/// Set options that can be changed per call
+/// @param {List} $widths - A list of viewports and their breakpoints
+/// @param {string} $name - The config name
+///
 @mixin configure($widths, $name) {
-  @if (list.length($widths)) {
-    $w: (map.merge(config.$widths, ($name:$widths)));
-    config.$widths: $w;
+  @if meta.type-of($widths) == 'list' {
+    config.$widths: map.merge(config.$widths, ($name: $widths));
+  }
+}
+
+/// Set global library options
+/// @param {List} $allowed-operators - A list of allowed operators in media expressions
+/// @param {Map} $unit-intervals - A map of unit intervals
+///
+@mixin configure-globally($allowed-operators, $unit-intervals) {
+  @if meta.type-of($allowed-operators) == 'list' {
+    config.$allowed-operators: $allowed-operators;
+  }
+
+  @if meta.type-of($unit-intervals) == 'map' {
+    config.$unit-intervals: $unit-intervals;
   }
 }
 
@@ -25,7 +42,7 @@
     } @else if not map.has-key($media-expressions, $condition) {
       $operator: expression.get-operator($condition);
 
-      @if not list.index(('<=', '≤', '>'), $operator) {
+      @if not list.index(config.$allowed-operators, $operator) {
         @error 'Operator "#{$operator}" is not allowed in condition "#{$condition}"';
       }
     }

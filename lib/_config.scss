@@ -10,7 +10,13 @@ $unit-intervals: (
   '': 0
 ) !default;
 
+/// Map of viewport and breakpoint definitions
+///
 $widths: () !default;
+
+/// List of allowed operators
+///
+$allowed-operators: ('>=', '>', '<=', '<', '≥', '≤') !default;
 
 /// Media type expressions
 ///
@@ -42,42 +48,25 @@ $media-feature-resolution-expressions: (
     @error 'Config "#{$name}" was not found. You must register it first.';
   }
 
+  $config: map.get($widths, $name);
+  $boundaries: create-viewport-boundaries($config);
+
   @return (
-    'breakpoints': create-breakpoints(map.get($widths, $name)),
+    'boundaries': $boundaries,
     'media-expressions': assign(
       $media-type-expressions,
       $media-feature-orientation-expressions,
       $media-feature-resolution-expressions,
-      create-media-feature-width-expressions(map.get($widths, $name)),
+      create-media-feature-width-expressions($boundaries),
     )
   );
 }
 
-/// Create a map of breakpoints with their max values as keys
-/// @param {Map} $config - The input config map
-/// @return {Map} - The breakpoint definitions
-///
-@function create-breakpoints($config) {
-  $result: ();
-  $boundaries: create-viewport-boundaries($config);
-
-  @each $map-key, $map-value in $boundaries {
-    $max-width-value: map.get($map-value, 'max');
-
-    @if $max-width-value {
-      $result: map.merge($result, ($map-key: $max-width-value));
-    }
-  }
-
-  @return $result;
-}
-
 /// Compile a map of width expressions from a widths config list
-/// @param {List} $config - The widths config list
+/// @param {Map} $boundaries - A map of viewport boundaries
 ///
-@function create-media-feature-width-expressions($config) {
+@function create-media-feature-width-expressions($boundaries) {
   $result: ();
-  $boundaries: create-viewport-boundaries($config);
 
   @each $map-key, $map-value in $boundaries {
     $min-width-value: map.get($map-value, 'min');
