@@ -37,7 +37,7 @@ $media-feature-resolution-expressions: (
 /// @param {string} $name - The config's name
 /// @return {Map} - The configuration
 ///
-@function get-config($name: 'default') {
+@function get-config($name) {
   @if not map.has-key($widths, $name) {
     @error 'Config "#{$name}" was not found. You must register it first.';
   }
@@ -63,7 +63,10 @@ $media-feature-resolution-expressions: (
 
   @each $map-key, $map-value in $boundaries {
     $max-width-value: map.get($map-value, 'max');
-    $result: map.merge($result, ($map-key: $max-width-value));
+
+    @if $max-width-value {
+      $result: map.merge($result, ($map-key: $max-width-value));
+    }
   }
 
   @return $result;

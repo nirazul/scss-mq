@@ -5,10 +5,11 @@
 
 /// Get a shallow list of resolved feature queries
 /// @param {string} $queries - A nested list structure
+/// @param {string} $config-name - The utilized config's name
 /// @param {boolean} $do-parse - Try to parse expressions
 /// @return {List} - A one item deep nested list like `(a b, c d e)`
 ///
-@function resolve-feature-queries($queries, $do-parse: true) {
+@function resolve-feature-queries($queries, $config-name, $do-parse: true) {
   $separator: list.separator($queries);
   $result: if($separator == 'space', ((),), ());
 
@@ -17,14 +18,14 @@
 
     @if (meta.type-of($query) == 'list') {
       // List item is a list itself
-      $chainable-queries: resolve-feature-queries($query);
+      $chainable-queries: resolve-feature-queries($query, $config-name);
     } @else {
       // List item is a string
-      $parsed-query: if($do-parse, expression.parse($query), $query);
+      $parsed-query: if($do-parse, expression.parse($query, $config-name), $query);
 
       @if (meta.type-of($parsed-query) == 'list') {
         // Parsed expression is a list
-        $chainable-queries: resolve-feature-queries($parsed-query, false);
+        $chainable-queries: resolve-feature-queries($parsed-query, $config-name, false);
       } @else {
         // Parsed expression is a string
         $chainable-queries: ($parsed-query);

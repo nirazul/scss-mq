@@ -33,7 +33,7 @@
   } @else {
     @include util.check-condition-validity($purged-conditions, $config-name);
 
-    @media #{unquote(parser.parse-media-query(parser.resolve-feature-queries($purged-conditions)))} {
+    @media #{unquote(parser.parse-media-query(parser.resolve-feature-queries($purged-conditions, $config-name)))} {
       @content;
     }
   }

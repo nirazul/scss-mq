@@ -90,7 +90,7 @@
 /// @param {string} $config-name - The utilized config's name
 /// @return {string} - Valid media query
 ///
-@function parse($expression, $config-name: 'default') {
+@function parse($expression, $config-name) {
   $config: config.get-config($config-name);
   $media-expressions: map.get($config, 'media-expressions');
   $breakpoints: map.get($config, 'breakpoints');
