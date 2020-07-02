@@ -27,6 +27,8 @@ $test-configs: (
   't-config-simple-2': (('>phone'), 'simple'),
   't-config-simple-3': (('>=desktop'), 'simple'),
   't-config-simple-4': (('<desktop'), 'simple'),
+  't-combination-1': (('>sm' '<=md'), 'default'),
+  't-combination-2': (('<sm', '>md'), 'default'),
 );
 
 $test-fixtures: (
@@ -41,6 +43,8 @@ $test-fixtures: (
   't-config-simple-2': '(min-width: 768px)',
   't-config-simple-3': '(min-width: 768px)',
   't-config-simple-4': '(max-width: 767px)',
+  't-combination-1': '(min-width: 768px) and (max-width: 991px)',
+  't-combination-2': '(max-width: 543px), (min-width: 992px)',
 );
 
 @each $key in (map.keys($test-configs)) {
@@ -49,6 +53,6 @@ $test-fixtures: (
 
   /* #{meta.inspect($config)} */
   @include mq.media($config...) {
-    /* = #{$fixture} */
+    /*#{$fixture}*/
   }
 }
