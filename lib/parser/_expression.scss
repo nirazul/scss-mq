@@ -66,8 +66,6 @@
     $boundary: if(list.index(('>=', '<', '≥'), $operator), 'min', 'max');
     $result: deep-get($boundaries, $value, $boundary);
 
-    @debug $boundaries;
-
     @if not $result {
       @error 'Boundary "#{$boundary}" is not defined for viewport "#{$value}" in expression "#{$expression}".';
     }
