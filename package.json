@@ -15,7 +15,9 @@
     "prepublishOnly": "npm run test",
     "test": "npm run build && npm run test:lint && npm run test:unit",
     "test:lint": "npx stylelint --max-warnings 0 **/*.scss",
-    "test:unit": "npx sass test.scss test.css",
+    "test:unit": "npm run test:unit:run && npm run test:unit:check",
+    "test:unit:run": "npx sass --no-source-map test.scss test.css",
+    "test:unit:check": "npx mocha **/*.spec.mjs -r chai/register-expect",
     "clean": "rm -rf vendor && mkdir vendor",
     "move": "rsync -rm `pwd`/node_modules/* --include='*.scss' --include='*/' --exclude='*' vendor",
     "build": "npm run clean && npm run move"
@@ -42,7 +44,10 @@
     "@dreipol/stylelint-config-bem-pattern": "^2.0.1",
     "@dreipol/stylelint-config-order": "^3.0.0",
     "@dreipol/stylelint-config-scss": "^2.0.1",
-    "@nirazul/scss-utils": "^1.1.0",
+    "chai": "^4.2.0",
+    "css": "^3.0.0",
+    "lodash.chunk": "^4.2.0",
+    "mocha": "^8.0.1",
     "sass": "^1.26.8",
     "stylelint": "^13.0.0",
     "stylelint-order": "^4.0.0",
@@ -55,6 +60,7 @@
   },
   "homepage": "https://github.com/nirazul/scss-mq#readme",
   "dependencies": {
+    "@nirazul/scss-utils": "^1.1.2",
     "sass-to-js": "^1.3.1"
   }
 }
