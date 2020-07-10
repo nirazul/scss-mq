@@ -16,7 +16,7 @@
     "test": "npm run build && npm run test:lint && npm run test:unit",
     "test:lint": "npx stylelint --max-warnings 0 **/*.scss",
     "test:unit": "npm run test:unit:run && npm run test:unit:check",
-    "test:unit:run": "npx sass --no-source-map test.scss test.css",
+    "test:unit:run": "npx sass --no-source-map test/test.scss test/test.css",
     "test:unit:check": "npx mocha **/*.spec.mjs -r chai/register-expect",
     "clean": "rm -rf vendor && mkdir vendor",
     "move": "rsync -rm `pwd`/node_modules/* --include='*.scss' --include='*/' --exclude='*' vendor",

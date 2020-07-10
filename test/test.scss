@@ -1,6 +1,6 @@
 @use 'sass:map';
 @use 'sass:meta';
-@use 'index' as mq;
+@use '../index' as mq;
 
 //@include mq.configure-globally(
 //  $allowed-operators: ('<=', '≤', '>'),
@@ -13,6 +13,10 @@
 @include mq.configure(
   $widths: ('phone' 768px 'desktop'),
   $name: 'simple',
+);
+@include mq.configure(
+  $widths: ('a' 20em 'b' 40em 'c'),
+  $name: 'em',
 );
 
 $test-configs: (
@@ -29,6 +33,10 @@ $test-configs: (
   't-config-simple-4': (('<desktop'), 'simple'),
   't-combination-1': (('>sm' '<=md'), 'default'),
   't-combination-2': (('<sm', '>md'), 'default'),
+  't-combination-3': (('sm', 'lg'), 'default'),
+  't-combination-4': (('sm', '>xl'), 'default'),
+  't-em-1': (('a'), 'em'),
+  't-em-2': (('>a' '<=b'), 'em'),
 );
 
 $test-fixtures: (
@@ -45,6 +53,10 @@ $test-fixtures: (
   't-config-simple-4': '(max-width: 767px)',
   't-combination-1': '(min-width: 768px) and (max-width: 991px)',
   't-combination-2': '(max-width: 543px), (min-width: 992px)',
+  't-combination-3': '(min-width: 544px) and (max-width: 767px), (min-width: 992px) and (max-width: 1279px)',
+  't-combination-4': '(min-width: 544px) and (max-width: 767px), (min-width: 1600px)',
+  't-em-1': '(max-width: 19.99em)',
+  't-em-2': '(min-width: 20em) and (max-width: 39.99em)',
 );
 
 @each $key in (map.keys($test-configs)) {
@@ -53,6 +65,6 @@ $test-fixtures: (
 
   /* #{meta.inspect($config)} */
   @include mq.media($config...) {
-    /*#{$fixture}*/
+    /*#{$fixture}*/ // stylelint-disable-line comment-whitespace-inside
   }
 }

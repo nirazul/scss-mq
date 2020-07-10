@@ -9,5 +9,5 @@ vendor/
 .idea/
 
 # Generated test files
-test.css
+test/test.css
 test.css.map

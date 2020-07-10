@@ -3,7 +3,7 @@ import css from 'css'
 import chai from 'chai'
 import chunk from 'lodash.chunk'
 
-const data = fs.readFileSync('./test.css')
+const data = fs.readFileSync('./test/test.css')
 const ast = css.parse(data.toString())
 const sources = chunk(ast.stylesheet.rules, 2)
 
