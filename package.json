@@ -1,6 +1,6 @@
 {
   "name": "@nirazul/scss-mq",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Media query helper library for sass.",
   "main": "_index.scss",
   "directories": {
