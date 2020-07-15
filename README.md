@@ -162,7 +162,7 @@ You can configure these options individually or all at once.
 Unit intervals increase or reduce limit sizes when using exclude operators ('>' and '<').
 
 ```scss
-@include mq.configure-globally($unit-intervals: (('px': 1, 'em': 0.005, 'rem': 0.01, '': 0));
+@include mq.configure-globally($unit-intervals: ('px': 1, 'em': 0.005, 'rem': 0.01, '': 0));
 ```
 
 **Default values**
