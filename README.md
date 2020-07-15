@@ -70,7 +70,7 @@ In that case, they return an error:
 
 ### Absolute values
 For one-off scenarios you can use custom widths.
-When using exclude operators ('>' and '<') the width is reduced by an amount defined by the configurable global values stored in `$unit-intervals`.
+When using exclude operators (`>` and `<`) the width is reduced or increased by an amount defined by the configurable global values stored in `$unit-intervals`.
 
 ```scss
 @include mq.media('<1920px') { /* #1 */ }
@@ -133,7 +133,7 @@ You may use multiple configurations by adding a name. The default config name is
 When using a config name, you need to pass a list as the first argument to `mq.media`!
 
 ## Media feature expressions
-These are the default media feature expressions that you can use alongside width expressions:
+These are the default keywords that you can use alongside width expressions:
 
 - `portrait` > `(orientation: portrait)`
 - `landscape` > `(orientation: landscape)`
@@ -165,7 +165,7 @@ Unknown expressions will be handled as raw values and can be combined with any o
 ```
 This compiles to:
 ```css
-@media print and (orientation: portrait) { /* #1 */ }
+@media print, (orientation: portrait) { /* #1 */ }
 @media not screen and (min-width: 543px) { /* #2 */ }
 @media (any-pointer: coarse) and (min-resolution: 2dppx) { /* #3 */ }
 ```
@@ -175,7 +175,7 @@ There is a number of global config options that have an effect on all available 
 You can configure these options individually or all at once.
 
 ### Unit intervals
-Unit intervals increase or reduce limit sizes when using exclude operators ('>' and '<').
+Unit intervals increase or reduce limit sizes when using exclude operators (`>` and `<`).
 
 ```scss
 @include mq.configure-globally($unit-intervals: ('px': 1, 'em': 0.005, 'rem': 0.01, '': 0));
@@ -223,7 +223,7 @@ $default-media-feature-expressions: (
 );
 ```
 
-To only add media feature expressions to the list instead of replacing it, you can merge the defaults with your own map:
+To add keywords to the list instead of replacing it, you can merge the defaults with your own map:
 
 ```scss
 @use '@nirazul/scss-mq' as mq;
