@@ -25,7 +25,7 @@ npm i -S @nirazul/scss-mq
 
 3. Start styling your breakpoints at your will
   ```scss
-  @include mq.media(('phone')) { /* my phone styles */ }
+  @include mq.media('phone') { /* my phone styles */ }
   ```
 
 # Documentation
