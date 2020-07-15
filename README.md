@@ -14,13 +14,19 @@ npm i -S @nirazul/scss-mq
 # Usage
 
 1. Add the main file to your scss:
-<br> `@use '@nirazul/scss-mq' as mq`
+  ```scss
+  @use '@nirazul/scss-mq' as mq
+  ```
 
 2. Configure the lib according to your project's breakpoints:
-<br> `@include mq.configure(('phone' 544px 'tablet' 992px 'desktop'))`
+  ```scss
+  @include mq.configure(('phone' 544px 'tablet' 992px 'desktop'))
+  ```
 
 3. Start styling your breakpoints at your will
-<br> `@include mq.media(('phone')) { /* my phone styles */ }`
+  ```scss
+  @include mq.media(('phone')) { /* my phone styles */ }
+  ```
 
 # Documentation
 
