@@ -10,12 +10,26 @@
 @use '../../vendor/@nirazul/scss-utils/lib/function/map/deep-get' as *;
 @use '../config';
 
+/// Check if an expression has an operator
+/// @param {string} $expression - Expression to check
+/// @return {boolean} - The executed check
+///
+@function has-operator($expression) {
+  @each $operator in config.$default-allowed-operators {
+    @if (string.index($expression, $operator)) {
+      @return true;
+    }
+  }
+
+  @return false;
+}
+
 /// Get operator of an expression
 /// @param {string} $expression - Expression to extract operator from
-/// @return {string} - Any of `>=`, `>`, `<=`, `<`, `≥`, `≤`
+/// @return {string} - Any valid operator
 ///
 @function get-operator($expression) {
-  @each $operator in ('>=', '>', '<=', '<', '≥', '≤') {
+  @each $operator in config.$default-allowed-operators {
     @if (string.index($expression, $operator)) {
       @return $operator;
     }
@@ -102,13 +116,17 @@
 ///
 @function parse($expression, $config-name) {
   $config: config.get-config($config-name);
-  $media-expressions: map.get($config, 'media-expressions');
+  $media-feature-expressions: map.get($config, 'media-feature-expressions');
   $boundaries: map.get($config, 'boundaries');
 
-  // If it is part of $media-expressions, it has no operator
-  // then there is no need to go any further, just return the value
-  @if (map.has-key($media-expressions, $expression)) {
-    @return map.get($media-expressions, $expression);
+  // If it is a known media feature expression, return the corresponding value
+  @if (map.has-key($media-feature-expressions, $expression)) {
+    @return map.get($media-feature-expressions, $expression);
+  }
+
+  // If it has no known operator, return the raw value
+  @if not has-operator($expression) {
+    @return $expression;
   }
 
   $operator: get-operator($expression);

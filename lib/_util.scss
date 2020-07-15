@@ -5,8 +5,6 @@
 @use 'config';
 @use 'parser/expression';
 
-@forward 'config' show $default-allowed-operators, $default-media-expressions, $default-unit-intervals;
-
 /// Set options that can be changed per call
 /// @param {List} $widths - A list of viewports and their breakpoints
 /// @param {string} $name - The config name
@@ -19,20 +17,23 @@
 
 /// Set global library options
 /// @param {List} $allowed-operators - A list of allowed operators in media expressions
-/// @param {Map} $media-expressions - A map of media expressions
+/// @param {Map} $media-feature-expressions - A map of media expressions
 /// @param {Map} $unit-intervals - A map of unit intervals
 ///
-@mixin configure-globally($allowed-operators, $media-expressions, $unit-intervals) {
+@mixin configure-globally($allowed-operators, $media-feature-expressions, $unit-intervals) {
   @if meta.type-of($allowed-operators) == 'list' {
-    config.$allowed-operators: $allowed-operators;
+    config.$allowed-operators:
+    $allowed-operators;
   }
 
-  @if meta.type-of($media-expressions) == 'map' {
-    config.$media-expressions: $media-expressions;
+  @if meta.type-of($media-feature-expressions) == 'map' {
+    config.$media-feature-expressions:
+    $media-feature-expressions;
   }
 
   @if meta.type-of($unit-intervals) == 'map' {
-    config.$unit-intervals: $unit-intervals;
+    config.$unit-intervals:
+    $unit-intervals;
   }
 }
 
@@ -41,12 +42,12 @@
 /// @param {string} $config-name - The utilized config's name
 ///
 @mixin check-condition-validity($conditions, $config-name) {
-  $media-expressions: map.get(config.get-config($config-name), 'media-expressions');
+  $media-feature-expressions: map.get(config.get-config($config-name), 'media-feature-expressions');
 
   @each $condition in $conditions {
     @if (meta.type-of($condition) == 'list') {
       @include check-condition-validity($condition, $config-name);
-    } @else if not map.has-key($media-expressions, $condition) {
+    } @else if expression.has-operator($condition) {
       $operator: expression.get-operator($condition);
 
       @if not list.index(config.$allowed-operators, $operator) {

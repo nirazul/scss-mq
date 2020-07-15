@@ -12,17 +12,15 @@ $widths: () !default;
 $default-allowed-operators: ('>=', '>', '<=', '<', '≥', '≤');
 $allowed-operators: $default-allowed-operators !default;
 
-/// Media feature and type expressions
+/// Media feature expressions
 ///
-$default-media-expressions: (
-  screen: 'screen',
-  print: 'print',
+$default-media-feature-expressions: (
   portrait: '(orientation: portrait)',
   landscape: '(orientation: landscape)',
   res2x: ('(min-resolution: 2dppx)'),
   res3x: ('(min-resolution: 3dppx)'),
 );
-$media-expressions: $default-media-expressions !default;
+$media-feature-expressions: $default-media-feature-expressions !default;
 
 $default-unit-intervals: (
   'px': 1,
@@ -46,8 +44,8 @@ $unit-intervals: $default-unit-intervals !default;
 
   @return (
     'boundaries': $boundaries,
-    'media-expressions': assign(
-      $media-expressions,
+    'media-feature-expressions': assign(
+      $media-feature-expressions,
       create-media-feature-width-expressions($boundaries),
     )
   );

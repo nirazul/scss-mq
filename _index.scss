@@ -1,1 +1,2 @@
-@forward 'lib/index' show configure, configure-globally, media, $default-allowed-operators, $default-media-expressions, $default-unit-intervals;
+@forward 'lib/config' show $default-allowed-operators, $default-media-feature-expressions, $default-unit-intervals;
+@forward 'lib/index' show configure, configure-globally, media;

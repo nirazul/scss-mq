@@ -132,26 +132,42 @@ You may use multiple configurations by adding a name. The default config name is
 <br>
 When using a config name, you need to pass a list as the first argument to `mq.media`!
 
-## Media type and feature expressions
-These are the built-in media type and feature expressions that you can use alongside width expressions:
+## Media feature expressions
+These are the default media feature expressions that you can use alongside width expressions:
 
-- `screen` > `screen`
-- `print` > `print`
 - `portrait` > `(orientation: portrait)`
 - `landscape` > `(orientation: landscape)`
 - `res2x` > `(min-resolution: 2dppx)`
 - `res3x` > `(min-resolution: 3dppx)`
 
-These expressions will be made customizable in a future release.
-
-They are fully mixable with any other expression available to you:
+They are fully mixable with any other expression available to you and are customizable via the global config:
 
 ```scss
-@include mq.media(('screen' '>md')) { /* #1 */ }
+@include mq.media(('portrait' '>md')) { /* #1 */ }
 ```
 This compiles to:
 ```css
-@media screen and (min-width: 992px) { /* #1 */ }
+@media (orientation: portrait) and (min-width: 992px) { /* #1 */ }
+```
+
+### Media type expressions and unknown keywords
+Unknown expressions have the following properties:
+- Not part of the config's expression keyword list
+- Not a viewport name
+- No operator in front of it
+
+Unknown expressions will be handled as raw values and can be combined with any other expression.
+
+```scss
+@include mq.media(('print', 'portrait')) { /* #1 */ }
+@include mq.media(('not screen' 'xs')) { /* #2 */ }
+@include mq.media(('(any-pointer: coarse)' 'res2x')) { /* #3 */ }
+```
+This compiles to:
+```css
+@media print and (orientation: portrait) { /* #1 */ }
+@media not screen and (min-width: 543px) { /* #2 */ }
+@media (any-pointer: coarse) and (min-resolution: 2dppx) { /* #3 */ }
 ```
 
 ## Global configuration options
@@ -190,8 +206,34 @@ To reduce possible media expressions you can explicitly allow only a subset of a
 $allowed-operators: ('>=', '>', '<=', '<', '≥', '≤');
 ```
 
-### Media type and feature expressions
-Coming soon...
+### Media feature expressions
+Media feature expressions can be registered as keywords. A few commonly used ones are included as defaults.
+
+```scss
+@include mq.configure-globally($media-feature-expressions: (coarse: '(any-pointer: coarse)', fine: '(any-pointer: fine)'));
+```
+
+**Default values**
+```scss
+$default-media-feature-expressions: (
+  portrait: '(orientation: portrait)',
+  landscape: '(orientation: landscape)',
+  res2x: ('(min-resolution: 2dppx)'),
+  res3x: ('(min-resolution: 3dppx)'),
+);
+```
+
+To only add media feature expressions to the list instead of replacing it, you can merge the defaults with your own map:
+
+```scss
+@use '@nirazul/scss-mq' as mq;
+@use 'sass:map';
+
+$additional-media-feature-expressions: (coarse: '(any-pointer: coarse)', fine: '(any-pointer: fine)');
+$merged: map.merge(mq.$default-media-feature-expressions, $additional-media-feature-expressions);
+
+@include mq.configure-globally($media-feature-expressions: $merged);
+```
 
 # Credits
 Originally, this library was a fork of [`@dreipol/scss-mq`](https://github.com/dreipol/scss-mq) and implemented [`include-media`](https://github.com/eduardoboucas/include-media).

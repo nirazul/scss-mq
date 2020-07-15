@@ -3,7 +3,7 @@
 @use '../index' as mq;
 
 @include mq.configure-globally(
-  $media-expressions: map.merge(mq.$default-media-expressions, (foo: '(bar: baz)')),
+  $media-feature-expressions: map.merge(mq.$default-media-feature-expressions, (foo: '(bar: baz)')),
 );
 
 @include mq.configure(
@@ -46,8 +46,10 @@ $test-configs: (
   't-interval-2': (('>1em' '<100em'), 'default'),
   't-interval-3': (('>1rem' '<100rem'), 'default'),
   't-feature-1': ('screen'),
-  't-feature-2': (('screen' 'landscape'), 'default'),
-  't-feature-3': (('foo'), 'default'),
+  't-feature-2': (('print', 'portrait'), 'default'),
+  't-feature-3': (('not screen' 'xs'), 'default'),
+  't-feature-4': (('(any-pointer: coarse)' 'res2x'), 'default'),
+  't-feature-5': (('foo'), 'default'),
 );
 
 $test-fixtures: (
@@ -77,8 +79,10 @@ $test-fixtures: (
   't-interval-2': '(min-width: 1.01em) and (max-width: 99.99em)',
   't-interval-3': '(min-width: 1.1rem) and (max-width: 99.9rem)',
   't-feature-1': 'screen',
-  't-feature-2': 'screen and (orientation: landscape)',
-  't-feature-3': '(bar: baz)',
+  't-feature-2': 'print, (orientation: portrait)',
+  't-feature-3': 'not screen and (max-width: 543px)',
+  't-feature-4': '(any-pointer: coarse) and (min-resolution: 2dppx)',
+  't-feature-5': '(bar: baz)',
 );
 
 @each $key in (map.keys($test-configs)) {
