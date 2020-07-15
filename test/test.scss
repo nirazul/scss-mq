@@ -39,10 +39,17 @@ $test-configs: (
   't-combination-4': (('sm', '>xl'), 'default'),
   't-em-1': (('a'), 'em'),
   't-em-2': (('>a' '<=b'), 'em'),
+  't-absolute-1': (('>666px'), 'default'),
+  't-absolute-2': (('>=666px'), 'default'),
+  't-absolute-3': (('>=1234px' '<=5678px'), 'default'),
+  't-interval-1': (('>1px' '<100px'), 'default'),
+  't-interval-2': (('>1em' '<100em'), 'default'),
+  't-interval-3': (('>1rem' '<100rem'), 'default'),
+  't-feature-1': ('screen'),
+  't-feature-2': (('screen' 'landscape'), 'default'),
 );
 
 $test-fixtures: (
-  't-test-1': ('err'),
   't-config-default-1': '(max-width: 543px)',
   't-config-default-2': '(max-width: 543px)',
   't-config-default-3': '(max-width: 543px)',
@@ -62,6 +69,14 @@ $test-fixtures: (
   't-combination-4': '(min-width: 544px) and (max-width: 767px), (min-width: 1600px)',
   't-em-1': '(max-width: 19.99em)',
   't-em-2': '(min-width: 20em) and (max-width: 39.99em)',
+  't-absolute-1': '(min-width: 667px)',
+  't-absolute-2': '(min-width: 666px)',
+  't-absolute-3': '(min-width: 1234px) and (max-width: 5678px)',
+  't-interval-1': '(min-width: 2px) and (max-width: 99px)',
+  't-interval-2': '(min-width: 1.01em) and (max-width: 99.99em)',
+  't-interval-3': '(min-width: 1.1rem) and (max-width: 99.9rem)',
+  't-feature-1': ('screen'),
+  't-feature-2': ('screen and (orientation: landscape)'),
 );
 
 @each $key in (map.keys($test-configs)) {
