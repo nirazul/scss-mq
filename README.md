@@ -72,6 +72,14 @@ In that case, they return an error:
 For one-off scenarios you can use custom widths.
 When using exclude operators ('>' and '<') the width is reduced by an amount defined by the configurable global values stored in `$unit-intervals`.
 
+```scss
+@include mq.media('<1920px') { /* #1 */ }
+```
+This compiles to:
+```css
+@media (max-width: 1919px) { /* #1 */ }
+```
+
 ### Combining media queries
 You may combine expressions using a list. The list separator defines the conjunction type.
 
@@ -79,7 +87,7 @@ You may combine expressions using a list. The list separator defines the conjunc
 To logically connect two expressions with "AND", use a list separator of type `space`:
 
 ```scss
-@include mq.media(('>sm' '<=lg')) { /* #1 */}
+@include mq.media(('>sm' '<=lg')) { /* #1 */ }
 ```
 This compiles to:
 ```css
@@ -90,7 +98,7 @@ This compiles to:
 To logically connect two expressions with "OR", use a list separator of type `comma`:
 
 ```scss
-@include mq.media(('<sm', '>lg')) { /* #1 */}
+@include mq.media(('<sm', '>lg')) { /* #1 */ }
 ```
 This compiles to:
 ```css
@@ -102,7 +110,7 @@ You can even nest expressions and conjunctions. They will be resolved recursivel
 Notice that there is often a simpler way to achieve the same result.
 
 ```scss
-@include mq.media(('xs', ('>md' '<=lg'))) { /* #1 */}
+@include mq.media(('xs', ('>md' '<=lg'))) { /* #1 */ }
 ```
 This compiles to:
 ```css
@@ -139,7 +147,7 @@ These expressions will be made customizable in a future release.
 They are fully mixable with any other expression available to you:
 
 ```scss
-@include mq.media(('screen' '>md')) { /* #1 */}
+@include mq.media(('screen' '>md')) { /* #1 */ }
 ```
 This compiles to:
 ```css
