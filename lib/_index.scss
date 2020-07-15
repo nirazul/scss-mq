@@ -8,6 +8,8 @@
 @use 'util';
 @use 'parser/index' as parser;
 
+@forward 'config' show $default-allowed-operators, $default-media-expressions, $default-unit-intervals;
+
 /// Apply configuration to the library on a per call basis
 /// @param {List} $widths - A list of viewports and their breakpoints
 /// @param {string} $name - The config name
@@ -20,8 +22,12 @@
 /// @param {List} $allowed-operators - A list of allowed operators in media expressions
 /// @param {Map} $unit-intervals - A map of unit intervals
 ///
-@mixin configure-globally($allowed-operators: null, $unit-intervals: null) {
-  @include util.configure-globally($allowed-operators, $unit-intervals);
+@mixin configure-globally($allowed-operators: null, $unit-intervals: null, $media-expressions: null) {
+  @include util.configure-globally(
+    $allowed-operators: $allowed-operators,
+    $media-expressions: $media-expressions,
+    $unit-intervals: $unit-intervals,
+  );
 }
 
 /// Use a list of conditions to define a media query and protect against wrong usage.

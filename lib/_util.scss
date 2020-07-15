@@ -5,6 +5,8 @@
 @use 'config';
 @use 'parser/expression';
 
+@forward 'config' show $default-allowed-operators, $default-media-expressions, $default-unit-intervals;
+
 /// Set options that can be changed per call
 /// @param {List} $widths - A list of viewports and their breakpoints
 /// @param {string} $name - The config name
@@ -17,11 +19,16 @@
 
 /// Set global library options
 /// @param {List} $allowed-operators - A list of allowed operators in media expressions
+/// @param {Map} $media-expressions - A map of media expressions
 /// @param {Map} $unit-intervals - A map of unit intervals
 ///
-@mixin configure-globally($allowed-operators, $unit-intervals) {
+@mixin configure-globally($allowed-operators, $media-expressions, $unit-intervals) {
   @if meta.type-of($allowed-operators) == 'list' {
     config.$allowed-operators: $allowed-operators;
+  }
+
+  @if meta.type-of($media-expressions) == 'map' {
+    config.$media-expressions: $media-expressions;
   }
 
   @if meta.type-of($unit-intervals) == 'map' {

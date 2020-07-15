@@ -2,9 +2,9 @@
 @use 'sass:meta';
 @use '../index' as mq;
 
-//@include mq.configure-globally(
-//  $allowed-operators: ('<=', '≤', '>'),
-//);
+@include mq.configure-globally(
+  $media-expressions: map.merge(mq.$default-media-expressions, (foo: '(bar: baz)')),
+);
 
 @include mq.configure(
   $widths: (xs 544px sm 768px md 992px lg 1280px xl 1600px xxl),
@@ -47,6 +47,7 @@ $test-configs: (
   't-interval-3': (('>1rem' '<100rem'), 'default'),
   't-feature-1': ('screen'),
   't-feature-2': (('screen' 'landscape'), 'default'),
+  't-feature-3': (('foo'), 'default'),
 );
 
 $test-fixtures: (
@@ -75,8 +76,9 @@ $test-fixtures: (
   't-interval-1': '(min-width: 2px) and (max-width: 99px)',
   't-interval-2': '(min-width: 1.01em) and (max-width: 99.99em)',
   't-interval-3': '(min-width: 1.1rem) and (max-width: 99.9rem)',
-  't-feature-1': ('screen'),
-  't-feature-2': ('screen and (orientation: landscape)'),
+  't-feature-1': 'screen',
+  't-feature-2': 'screen and (orientation: landscape)',
+  't-feature-3': '(bar: baz)',
 );
 
 @each $key in (map.keys($test-configs)) {
@@ -85,6 +87,7 @@ $test-fixtures: (
 
   /* #{meta.inspect($config)} */
   @include mq.media($config...) {
-    /*#{$fixture}*/ // stylelint-disable-line comment-whitespace-inside
+    /*#{$fixture}*/
+    // stylelint-disable-line comment-whitespace-inside
   }
 }
