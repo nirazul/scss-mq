@@ -15,7 +15,7 @@ npm i -S @nirazul/scss-mq
 
 1. Add the main file to your scss:
   ```scss
-  @use '@nirazul/scss-mq' as mq
+  @use '@nirazul/scss-mq' as mq;
   ```
 
 2. Configure the lib according to your project's breakpoints:
