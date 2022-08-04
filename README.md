@@ -56,7 +56,8 @@ Notice that some expressions don't make sense as they would always be true or in
 In that case, they return an error:
 
 ```scss
-// Antipattern - Do not use!
+// The following examples are anti-patterns - Do not use!
+
 @include mq.media('>=xs') {
   /* error, as the query would always be active */
 }
@@ -226,8 +227,8 @@ $default-media-feature-expressions: (
 To add keywords to the list instead of replacing it, you can merge the defaults with your own map:
 
 ```scss
-@use '@nirazul/scss-mq' as mq;
 @use 'sass:map';
+@use '@nirazul/scss-mq' as mq;
 
 $additional-media-feature-expressions: (coarse: '(any-pointer: coarse)', fine: '(any-pointer: fine)');
 $merged: map.merge(mq.$default-media-feature-expressions, $additional-media-feature-expressions);
