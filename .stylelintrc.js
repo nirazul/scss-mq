@@ -1,14 +1,11 @@
 module.exports = {
   extends: [
-    '@dreipol/stylelint-config',
-    '@dreipol/stylelint-config-bem-pattern',
-    '@dreipol/stylelint-config-order',
-    '@dreipol/stylelint-config-scss',
+    'stylelint-config-standard',
+    'stylelint-config-recommended-scss',
+    'stylelint-config-prettier',
   ],
   'rules': {
     indentation: [2, { severity: 'error' }],
-    'scss/no-duplicate-dollar-variables': [true, {
-      'ignoreInsideAtRules': ['each', 'else', 'for', 'function', 'if', 'mixin'],
-    }],
+    'string-quotes': ['single', { severity: 'error' }],
   },
 }
