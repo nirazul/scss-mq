@@ -1,5 +1,6 @@
 @use 'sass:list';
 @use 'sass:map';
+@use 'sass:math';
 @use 'sass:meta';
 @use '../vendor/@nirazul/scss-utils/lib/function/map/assign' as *;
 
@@ -102,7 +103,7 @@ $unit-intervals: $default-unit-intervals !default;
 
       @if not $is-last {
         $value: list.nth($config, $i + 1);
-        $interval: map.get($unit-intervals, unit($value));
+        $interval: map.get($unit-intervals, math.unit($value));
         $boundaries: assign($boundaries, (max: $value - $interval));
       }
 

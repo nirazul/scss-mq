@@ -91,7 +91,7 @@ $test-fixtures: (
 
   /* #{meta.inspect($config)} */
   @include mq.media($config...) {
-    // stylelint-disable-next-line comment-whitespace-inside
+    // stylelint-disable-next-line comment-whitespace-inside, comment-empty-line-before
     /*#{$fixture}*/
   }
 }
