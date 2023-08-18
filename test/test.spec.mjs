@@ -1,4 +1,4 @@
-import fs from 'fs'
+import fs from 'node:fs'
 import css from 'css'
 import chai from 'chai'
 import chunk from 'lodash.chunk'
