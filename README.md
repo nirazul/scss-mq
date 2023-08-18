@@ -241,7 +241,7 @@ Originally, this library was a fork of [`@dreipol/scss-mq`](https://github.com/d
 <br>
 It is now maintained separately and as one package to speed up implementation of features such as the sass module syntax.
 
-[workflow-image]:https://img.shields.io/github/workflow/status/nirazul/scss-mq/test?style=flat-square
+[workflow-image]:https://img.shields.io/github/actions/workflow/status/nirazul/scss-mq/test.yml?branch=master&style=flat-square
 [workflow-url]:https://github.com/nirazul/scss-mq/actions
 
 [license-image]:https://img.shields.io/github/license/nirazul/scss-mq?style=flat-square
