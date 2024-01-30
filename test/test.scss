@@ -5,7 +5,6 @@
 @include mq.configure-globally(
   $media-feature-expressions: map.merge(mq.$default-media-feature-expressions, (foo: '(bar: baz)')),
 );
-
 @include mq.configure(
   $widths: (xs 544px sm 768px md 992px lg 1280px xl 1600px xxl),
   $name: 'default',

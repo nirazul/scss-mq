@@ -2,10 +2,15 @@ module.exports = {
   extends: [
     'stylelint-config-standard',
     'stylelint-config-recommended-scss',
-    'stylelint-config-prettier',
   ],
   'rules': {
-    indentation: [2, { severity: 'error' }],
-    'string-quotes': ['single', { severity: 'error' }],
+    'at-rule-empty-line-before': [
+      'always',
+      {
+        except: ['blockless-after-same-name-blockless', 'first-nested'],
+        ignore: ['after-comment'],
+        ignoreAtRules: ['else'],
+      },
+    ],
   },
 }

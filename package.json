@@ -41,18 +41,17 @@
   },
   "devDependencies": {
     "@types/chai": "^4.3.1",
-    "chai": "^4.2.0",
+    "chai": "^5.0.3",
     "css": "^3.0.0",
     "lodash.chunk": "^4.2.0",
     "mocha": "^10.0.0",
     "sass": "^1.54.2",
     "sass-to-js": "^2.0.0",
-    "stylelint": "^14.9.1",
-    "stylelint-config-prettier": "^9.0.3",
-    "stylelint-config-recommended-scss": "^7.0.0",
-    "stylelint-config-standard": "^26.0.0",
-    "stylelint-order": "^5.0.0",
-    "stylelint-scss": "^4.3.0"
+    "stylelint": "^16.2.0",
+    "stylelint-config-recommended-scss": "^14.0.0",
+    "stylelint-config-standard": "^36.0.0",
+    "stylelint-order": "^6.0.4",
+    "stylelint-scss": "^6.1.0"
   },
   "license": "CC0-1.0",
   "bugs": {
@@ -60,6 +59,6 @@
   },
   "homepage": "https://github.com/nirazul/scss-mq#readme",
   "dependencies": {
-    "@nirazul/scss-utils": "^1.2.0"
+    "@nirazul/scss-utils": "^2.0.0"
   }
 }
