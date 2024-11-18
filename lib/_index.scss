@@ -4,6 +4,7 @@
 @use 'sass:list';
 @use 'sass:map';
 @use 'sass:meta';
+@use 'sass:string';
 @use '../vendor/@nirazul/scss-utils/lib/function/list/purge' as *;
 @use 'config';
 @use 'util';
@@ -47,7 +48,7 @@
   } @else {
     @include util.check-condition-validity($purged-conditions, $config-name);
 
-    @media #{unquote(parser.parse-media-query(parser.resolve-feature-queries($purged-conditions, $config-name)))} {
+    @media #{string.unquote(parser.parse-media-query(parser.resolve-feature-queries($purged-conditions, $config-name)))} {
       @content;
     }
   }
